@@ -32,11 +32,12 @@
             this.lbxInbox = new System.Windows.Forms.ListBox();
             this.btnReply = new System.Windows.Forms.Button();
             this.tbxCompose = new System.Windows.Forms.TextBox();
+            this.btnConfigure = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnRetrieveMails
             // 
-            this.btnRetrieveMails.Location = new System.Drawing.Point(0, 0);
+            this.btnRetrieveMails.Location = new System.Drawing.Point(0, 32);
             this.btnRetrieveMails.Name = "btnRetrieveMails";
             this.btnRetrieveMails.Size = new System.Drawing.Size(108, 23);
             this.btnRetrieveMails.TabIndex = 0;
@@ -47,14 +48,14 @@
             // lbxInbox
             // 
             this.lbxInbox.FormattingEnabled = true;
-            this.lbxInbox.Location = new System.Drawing.Point(0, 29);
+            this.lbxInbox.Location = new System.Drawing.Point(0, 61);
             this.lbxInbox.Name = "lbxInbox";
-            this.lbxInbox.Size = new System.Drawing.Size(244, 186);
+            this.lbxInbox.Size = new System.Drawing.Size(244, 134);
             this.lbxInbox.TabIndex = 1;
             // 
             // btnReply
             // 
-            this.btnReply.Location = new System.Drawing.Point(261, 0);
+            this.btnReply.Location = new System.Drawing.Point(261, 32);
             this.btnReply.Name = "btnReply";
             this.btnReply.Size = new System.Drawing.Size(161, 23);
             this.btnReply.TabIndex = 2;
@@ -64,17 +65,28 @@
             // 
             // tbxCompose
             // 
-            this.tbxCompose.Location = new System.Drawing.Point(261, 29);
+            this.tbxCompose.Location = new System.Drawing.Point(261, 61);
             this.tbxCompose.Multiline = true;
             this.tbxCompose.Name = "tbxCompose";
-            this.tbxCompose.Size = new System.Drawing.Size(274, 184);
+            this.tbxCompose.Size = new System.Drawing.Size(274, 134);
             this.tbxCompose.TabIndex = 3;
+            // 
+            // btnConfigure
+            // 
+            this.btnConfigure.Location = new System.Drawing.Point(0, 0);
+            this.btnConfigure.Name = "btnConfigure";
+            this.btnConfigure.Size = new System.Drawing.Size(108, 23);
+            this.btnConfigure.TabIndex = 4;
+            this.btnConfigure.Text = "Configure account";
+            this.btnConfigure.UseVisualStyleBackColor = true;
+            this.btnConfigure.Click += new System.EventHandler(this.btnConfigure_Click);
             // 
             // MailboxContainer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(545, 225);
+            this.ClientSize = new System.Drawing.Size(545, 202);
+            this.Controls.Add(this.btnConfigure);
             this.Controls.Add(this.tbxCompose);
             this.Controls.Add(this.btnReply);
             this.Controls.Add(this.lbxInbox);
@@ -92,6 +104,7 @@
         private System.Windows.Forms.ListBox lbxInbox;
         private System.Windows.Forms.Button btnReply;
         private System.Windows.Forms.TextBox tbxCompose;
+        private System.Windows.Forms.Button btnConfigure;
     }
 }
 

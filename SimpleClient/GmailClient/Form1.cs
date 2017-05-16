@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GmailClient
@@ -22,6 +15,9 @@ namespace GmailClient
         private readonly int Pop3Port = 995;
         private readonly string SmtpUri = "smtp.gmail.com";
         private readonly int SmtpPort = 587;
+        private string EmailAddress = string.Empty;
+        private string Password = string.Empty;
+        private int maxMessageCount = 10;
 
         public MailboxContainer()
         {
@@ -32,29 +28,29 @@ namespace GmailClient
         {
             using (var client = new Pop3Client())
             {
-                client.ServerCertificateValidationCallback = CertificateValidationCallback;
-                client.Connect(Pop3Uri, Pop3Port, true);
-                client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate("recent:yogesh.choudhary.samples@gmail.com", "GeekY0g!");
-                int maxMessages = 3; int i = 0;
-                foreach (var message in client.GetMessages(0, client.Count))
+                try
                 {
-                    AddMessage(message.Subject);
-                    i++;
-                    if (i > maxMessages) break;
+                    client.ServerCertificateValidationCallback = CertificateValidationCallback;
+                    client.AuthenticationMechanisms.Remove("XOAUTH2");
+                    client.Connect(Pop3Uri, Pop3Port, true);
+                    client.Authenticate("recent:" + EmailAddress, Password);
+                    int totalMessages = client.Count;
+                    if (totalMessages > maxMessageCount) totalMessages = maxMessageCount;
+                    for (int i = 0; i < totalMessages; i++)
+                        AddMessage(client.GetMessage(i));
+                    client.Disconnect(true);
+
                 }
-                //for (int i = 0; i < 3; i++)
-                //{
-                //    var message = client.GetMessage(i);
-                //    AddMessage(message.Subject);
-                //}
-                client.Disconnect(true);
+                catch (MailKit.ProtocolException pe)
+                {
+                    Console.WriteLine(pe.Message);
+                }
             }
         }
 
-        private void AddMessage(string subject)
+        private void AddMessage(MimeMessage mimeMessage)
         {
-            lbxInbox.Items.Add(subject);
+            lbxInbox.Items.Add(mimeMessage);
         }
 
         private bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -71,13 +67,13 @@ namespace GmailClient
                 client.ServerCertificateValidationCallback = CertificateValidationCallback;
                 client.Connect(Pop3Uri, Pop3Port, true);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate("recent:yogesh.choudhary.samples@gmail.com", "GeekY0g!");
+                client.Authenticate("recent:" + EmailAddress, Password);
                 var message = client.GetMessage(lbxInbox.SelectedIndex);
 
                 reply.To.Add(message.From[0]);
                 reply.Subject = "Re: " + message.Subject;
                 reply.Body = new TextPart("plain") { Text = tbxCompose.Text };
-                reply.Sender = new MailboxAddress("yogesh.choudhary.sample@gmail.com");
+                reply.Sender = new MailboxAddress(EmailAddress);
                 client.Disconnect(true);
             }
 
@@ -86,10 +82,25 @@ namespace GmailClient
                 client.ServerCertificateValidationCallback = CertificateValidationCallback;
                 client.Connect(SmtpUri, SmtpPort, false);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate("yogesh.choudhary.samples@gmail.com", "GeekY0g!");
+                client.Authenticate(EmailAddress, Password);
                 client.Send(reply);
                 client.Disconnect(true);
             }
+        }
+
+        private void btnConfigure_Click(object sender, EventArgs e)
+        {
+            var c = new Configuration()
+            {
+                EmailAddress = this.EmailAddress,
+                Password = this.Password
+            };
+            if (c.ShowDialog()== DialogResult.OK)
+            {
+                EmailAddress = c.EmailAddress;
+                Password = c.Password;
+            }
+            c.Dispose();
         }
     }
 }
